@@ -1,9 +1,7 @@
-﻿#if Unterstützt_Async
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace SharedTools
 {
@@ -65,20 +63,10 @@ namespace SharedTools
             writer2.Close();
         }
 
-        public override ObjRef CreateObjRef(Type requestedType)
-        {
-            throw new NotImplementedException();
-        }
-
         public override void Flush()
         {
             writer1.Flush();
             writer2.Flush();
-        }
-
-        public override Task FlushAsync()
-        {
-            return Task.WhenAll(writer1.FlushAsync(), writer2.FlushAsync());
         }
 
         public override void Write(char value)
@@ -181,21 +169,6 @@ namespace SharedTools
         {
             writer1.Write(format, arg);
             writer2.Write(format, arg);
-        }
-
-        public override Task WriteAsync(char value)
-        {
-            return Task.WhenAll(writer1.WriteAsync(value), writer2.WriteAsync(value));
-        }
-
-        public override Task WriteAsync(string value)
-        {
-            return Task.WhenAll(writer1.WriteAsync(value), writer2.WriteAsync(value));
-        }
-
-        public override Task WriteAsync(char[] buffer, int index, int count)
-        {
-            return Task.WhenAll(writer1.WriteAsync(buffer, index, count), writer2.WriteAsync(buffer, index, count));
         }
 
         public override void WriteLine()
@@ -306,26 +279,6 @@ namespace SharedTools
             writer2.WriteLine(format, arg);
         }
 
-        public override Task WriteLineAsync(char value)
-        {
-            return Task.WhenAll(writer1.WriteLineAsync(value), writer2.WriteLineAsync(value));
-        }
-
-        public override Task WriteLineAsync(string value)
-        {
-            return Task.WhenAll(writer1.WriteLineAsync(value), writer2.WriteLineAsync(value));
-        }
-
-        public override Task WriteLineAsync(char[] buffer, int index, int count)
-        {
-            return Task.WhenAll(writer1.WriteLineAsync(buffer, index, count), writer2.WriteLineAsync(buffer, index, count));
-        }
-
-        public override Task WriteLineAsync()
-        {
-            return Task.WhenAll(writer1.WriteLineAsync(), writer2.WriteLineAsync());
-        }
-
         protected override void Dispose(bool disposing)
         {
             writer1.Dispose();
@@ -333,4 +286,3 @@ namespace SharedTools
         }
     }
 }
-#endif

@@ -1,4 +1,4 @@
-﻿using System;
+﻿#if NETFRAMEWORK
 using System.Drawing;
 
 namespace SharedTools
@@ -12,3 +12,4 @@ namespace SharedTools
         }
     }
 }
+#endif
