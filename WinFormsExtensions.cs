@@ -121,7 +121,7 @@ namespace SharedTools
             }
         }
 
-        public static void InvokeGeneric<T>(this Control c, Action func)
+        public static void InvokeGeneric(this Control c, Action func)
         {
             if (c.InvokeRequired)
                 c.Invoke(func);
@@ -137,7 +137,7 @@ namespace SharedTools
                 return func();
         }
 
-        public static void BeginInvokeGeneric<T>(this Control c, Action func)
+        public static void BeginInvokeGeneric(this Control c, Action func)
         {
             if (c.InvokeRequired)
                 c.BeginInvoke(func);
