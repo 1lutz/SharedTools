@@ -74,6 +74,7 @@ namespace SharedTools
             for (int x = 0; x < degreeOfParallelism; ++x)
             {
                 t = new Thread(DatenThread);
+                t.IsBackground = true;
                 t.Start(_queue.GetConsumingEnumerable());
                 _threads[x] = t;
             }
