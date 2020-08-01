@@ -74,6 +74,7 @@ namespace SharedTools
             for (int x = 0; x < degreeOfParallelism; ++x)
             {
                 t = new Thread(DatenThread);
+                t.IsBackground = true;
                 t.Start(_queue.GetConsumingEnumerable());
                 _threads[x] = t;
             }
@@ -129,11 +130,13 @@ namespace SharedTools
         {
             TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
 
-            new Thread(_tcs =>
+            Thread t = new Thread(_tcs =>
             {
                 Complete();
                 ((TaskCompletionSource<bool>)_tcs).SetResult(true);
-            }).Start(tcs);
+            });
+            t.IsBackground = true;
+            t.Start(tcs);
             return tcs.Task;
         }
     }
