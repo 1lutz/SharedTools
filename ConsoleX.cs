@@ -35,7 +35,7 @@ namespace SharedTools
                 {
                     eingabe = standard;
                 }
-            } while (eingabe != null);
+            } while (eingabe == null);
             return eingabe;
         }
 
