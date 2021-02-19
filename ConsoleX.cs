@@ -19,17 +19,24 @@ namespace SharedTools
             Console.WriteLine(new string(' ', indent) + text);
         }
 
-        public static string Prompt(string prompt, string standard = "")
+        public static string Prompt(string prompt, string standard = null)
         {
-            if (standard == null) standard = string.Empty;
             string eingabe;
 
-            if (standard == string.Empty)
-                Console.Write(prompt + ": ");
-            else
-                Console.Write(prompt + " (<ENTER> für \"" + standard + "\"): ");
-            eingabe = Console.ReadLine();
-            return eingabe != string.Empty ? eingabe : standard;
+            do
+            {
+                if (standard == null)
+                    Console.Write(prompt + ": ");
+                else
+                    Console.Write(prompt + " (<ENTER> für \"" + standard + "\"): ");
+                eingabe = Console.ReadLine();
+
+                if (eingabe == string.Empty)
+                {
+                    eingabe = standard;
+                }
+            } while (eingabe != null);
+            return eingabe;
         }
 
         public static void OverwriteLine(string text, bool newLine = true)
