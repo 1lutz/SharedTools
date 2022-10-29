@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Security;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace SharedTools
 {
@@ -19,18 +20,39 @@ namespace SharedTools
             Console.WriteLine(new string(' ', indent) + text);
         }
 
-        public static string Prompt(string prompt, string standard = "")
+        public static string Prompt(string prompt, Predicate<string> accept, string standard = null)
         {
-            if (standard == null) standard = string.Empty;
-            string eingabe;
-
-            if (standard == string.Empty)
+            if (standard == null)
                 Console.Write(prompt + ": ");
             else
                 Console.Write(prompt + " (<ENTER> für \"" + standard + "\"): ");
-            eingabe = Console.ReadLine();
-            return eingabe != string.Empty ? eingabe : standard;
+            int links = Console.CursorLeft;
+
+            while (true)
+            {
+                string eingabe = Console.ReadLine();
+
+                if (eingabe != string.Empty && accept(eingabe))
+                {
+                    return eingabe;
+                }
+                if (standard != null && accept(standard))
+                {
+                    return standard;
+                }
+                Console.SetCursorPosition(links, Console.CursorTop - 1);
+
+                if (eingabe != string.Empty)
+                {
+                    Console.Write(new string(' ', eingabe.Length));
+                    Console.CursorLeft = links;
+                }
+            }
         }
+
+        public static string Prompt(string prompt, string standard = null) => Prompt(prompt, _ => true, standard);
+
+        public static string Prompt(string prompt, Regex regex, string standard = null) => Prompt(prompt, x => regex.IsMatch(x), standard);
 
         public static void OverwriteLine(string text, bool newLine = true)
         {

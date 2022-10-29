@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -76,6 +78,28 @@ namespace SharedTools
                 if (result != null) return result;
             }
             return null;
+        }
+
+        private delegate void SetPropertyThreadSafeDelegate<TControl, TResult>(TControl control, Expression<Func<TControl, TResult>> property, TResult value);
+
+        public static void SetPropertyThreadSafe<TControl, TResult>(this TControl control, Expression<Func<TControl, TResult>> property, TResult value) where TControl : DispatcherObject
+        {
+            MemberExpression memberExpression = (MemberExpression)property.Body;
+            if (memberExpression.NodeType != ExpressionType.Parameter && memberExpression.NodeType != ExpressionType.MemberAccess) throw new ArgumentException("property");
+            PropertyInfo info = (PropertyInfo)memberExpression.Member;
+
+            if (control.CheckAccess())
+            {
+                info.SetValue(control, value, null);
+            }
+            else
+            {
+                try
+                {
+                    control.Dispatcher.Invoke(new SetPropertyThreadSafeDelegate<TControl, TResult>(SetPropertyThreadSafe), new object[] { control, property, value });
+                }
+                catch (ObjectDisposedException) { }
+            }
         }
 
         public static void BeginInvoke(this Dispatcher dispatcher, Action func)
